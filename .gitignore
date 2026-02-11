@@ -1,0 +1,14 @@
+# Root
+node_modules/
+
+# Server
+server/node_modules/
+server/.env
+server/uploads/
+
+# Client
+client/node_modules/
+client/.env
+
+# Logs
+*.log
