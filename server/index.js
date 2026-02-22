@@ -5,13 +5,13 @@ const connectDB=require("./config/DB");
 const { upload } = require("./upload");
 const path =require("path");
 const authRoutes=require("./routes/authRoutes");
-
+const assignmentRoutes = require("./routes/assignmentRoutes");
 dotenv.config();
 connectDB();
 const app = express();
 app.use(express.json());
 app.use("/api/auth",authRoutes);
-
+app.use("/api/assignments", assignmentRoutes);
 
 //to serve the user static image when they give url in browser http.. followed by image url
  const folderLocation=path.join(__dirname,"uploads");
