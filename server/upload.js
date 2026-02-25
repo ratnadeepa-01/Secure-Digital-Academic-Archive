@@ -7,7 +7,8 @@ const storage=multer .diskStorage({
        const fs = require("fs");
        if (!fs.existsSync("uploads")) {
           fs.mkdirSync("uploads");
-}
+       }
+         cb(null, "uploads");
     },
     filename:(req,file,cb)=>{
       const extension = path.extname(file.originalname);
@@ -23,7 +24,7 @@ const allowedTypes = [
     "image/png",
     "application/pdf"
 ];
-    const isAllowed=allowedTypes.test(file.mimetype);
+    const isAllowed=allowedTypes.includes(file.mimetype);
     if(isAllowed){
         cb(null,true);
     }

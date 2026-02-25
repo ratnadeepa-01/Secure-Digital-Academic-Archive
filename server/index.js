@@ -1,18 +1,22 @@
 const express = require("express");
 const multer = require("multer");
+const cors = require("cors");
 const dotenv=require("dotenv");
 const connectDB=require("./config/DB");
 const { upload } = require("./upload");
 const path =require("path");
 const authRoutes=require("./routes/authRoutes");
 const assignmentRoutes = require("./routes/assignmentRoutes");
+const submissionRoutes = require("./routes/submissionRoutes");
 dotenv.config();
 connectDB();
 const app = express();
+app.use(cors());
+app.use(express.json());
 app.use(express.json());
 app.use("/api/auth",authRoutes);
 app.use("/api/assignments", assignmentRoutes);
-
+app.use("/api/submissions",submissionRoutes);
 //to serve the user static image when they give url in browser http.. followed by image url
  const folderLocation=path.join(__dirname,"uploads");
 app.use("/uploads",express.static(folderLocation));
