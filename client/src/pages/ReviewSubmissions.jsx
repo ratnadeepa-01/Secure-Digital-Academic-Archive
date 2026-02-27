@@ -18,6 +18,7 @@ function ReviewSubmissions() {
             },
           }
         );
+
         setSubmissions(res.data);
       } catch (err) {
         console.log(err);
@@ -31,7 +32,7 @@ function ReviewSubmissions() {
     const remarks = prompt("Enter remarks:");
 
     try {
-      await axios.patch(
+      const res = await axios.patch(
         `http://localhost:3000/api/submissions/${submissionId}`,
         { status, remarks },
         {
@@ -41,8 +42,20 @@ function ReviewSubmissions() {
         }
       );
 
+      // Update UI without page reload
+      setSubmissions((prev) =>
+        prev.map((sub) =>
+          sub._id === submissionId
+            ? {
+                ...sub,
+                status: res.data.submission.status,
+                remarks: remarks || "",
+              }
+            : sub
+        )
+      );
+
       alert("Updated successfully!");
-      window.location.reload();
     } catch (err) {
       alert("Update failed");
     }
@@ -54,48 +67,78 @@ function ReviewSubmissions() {
         Student Submissions
       </h1>
 
-      {submissions.map((sub) => (
-        <div
-          key={sub._id}
-          className="bg-white p-6 rounded shadow mb-4"
-        >
-          <p>
-            <strong>Student:</strong> {sub.student.name}
-          </p>
-
-          <p>
-            <strong>Status:</strong> {sub.status}
-          </p>
-
-          <a
-            href={`http://localhost:3000/${sub.file.replace(/\\/g, "/")}`}            target="_blank"
-            rel="noreferrer"
-            className="text-blue-600 underline"
+      {submissions.length === 0 ? (
+        <p>No submissions yet.</p>
+      ) : (
+        submissions.map((sub) => (
+          <div
+            key={sub._id}
+            className="bg-white p-6 rounded shadow mb-4"
           >
-            View File
-          </a>
+            <p className="mb-2">
+              <strong>Student:</strong> {sub.student.name}
+            </p>
 
-          <div className="mt-4 space-x-4">
-            <button
-              onClick={() =>
-                updateStatus(sub._id, "APPROVED")
-              }
-              className="bg-green-600 text-white px-4 py-2 rounded"
-            >
-              Approve
-            </button>
+            {/* Status Badge */}
+            <p className="mb-2">
+              <strong>Status:</strong>{" "}
+              <span
+                className={`px-2 py-1 rounded text-white text-sm ${
+                  sub.status === "APPROVED"
+                    ? "bg-green-500"
+                    : sub.status === "REJECTED"
+                    ? "bg-red-500"
+                    : "bg-yellow-500"
+                }`}
+              >
+                {sub.status}
+              </span>
+            </p>
 
-            <button
-              onClick={() =>
-                updateStatus(sub._id, "REJECTED")
-              }
-              className="bg-red-600 text-white px-4 py-2 rounded"
+            {/* Show Remarks if Exists */}
+            {sub.remarks && (
+              <p className="mb-2">
+                <strong>Remarks:</strong> {sub.remarks}
+              </p>
+            )}
+
+            <a
+              href={`http://localhost:3000/${sub.file.replace(
+                /\\/g,
+                "/"
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-600 underline block mb-4"
             >
-              Reject
-            </button>
+              View File
+            </a>
+
+            {/* Only show buttons if still pending */}
+            {sub.status === "PENDING" && (
+              <div className="space-x-4">
+                <button
+                  onClick={() =>
+                    updateStatus(sub._id, "APPROVED")
+                  }
+                  className="bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  Approve
+                </button>
+
+                <button
+                  onClick={() =>
+                    updateStatus(sub._id, "REJECTED")
+                  }
+                  className="bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Reject
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }

@@ -68,23 +68,34 @@ exports.reviewSubmission = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+// @desc Student view their submissions
+// @route GET /api/submissions/my
+// @access Student only
+  exports.getMySubmissions = async (req, res) => {
+    try {
+      const submissions = await Submission.find({
+        student: req.user._id
+      }).populate("assignment");
 
+      res.status(200).json(submissions);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
 
 // @desc Student view their submissions
 // @route GET /api/submissions/my
 // @access Student only
-exports.getMySubmissions = async (req, res) => {
+exports.getSubmissionsByAssignment = async (req, res) => {
   try {
-    if (req.user.role !== "student") {
-      return res.status(403).json({ message: "Only students can view their submissions" });
-    }
+    const submissions = await Submission.find({
+      assignment: req.params.assignmentId
+    })
+      .populate("student", "name email")
+      .populate("assignment", "title");
 
-    const submissions = await Submission.find({ student: req.user._id })
-      .populate("assignment", "title subject dueDate");
-
-    return res.json(submissions);
-
+    res.status(200).json(submissions);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };

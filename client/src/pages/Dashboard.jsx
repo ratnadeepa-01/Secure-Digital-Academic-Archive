@@ -1,32 +1,45 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 function Dashboard() {
   const [assignments, setAssignments] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
+
   const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAssignments = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(
+        // Fetch assignments
+        const assignmentRes = await axios.get(
           "http://localhost:3000/api/assignments",
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setAssignments(res.data);
+        setAssignments(assignmentRes.data);
+
+        // If student, fetch submissions
+        if (role === "student") {
+          const submissionRes = await axios.get(
+            "http://localhost:3000/api/submissions/my",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setSubmissions(submissionRes.data);
+        }
+
       } catch (err) {
         console.log(err);
       }
     };
 
-    fetchAssignments();
-  }, [token]);
+    fetchData();
+  }, [token, role]);
 
   const logout = () => {
     localStorage.clear();
@@ -41,11 +54,16 @@ function Dashboard() {
         <h2 className="text-2xl font-bold mb-8">SDAA</h2>
 
         <ul className="space-y-4">
-          <li className="cursor-pointer hover:text-gray-300">
-            Dashboard
+          <li>
+            <Link to="/dashboard" className="hover:text-gray-300">
+              Dashboard
+            </Link>
           </li>
-          <li className="cursor-pointer hover:text-gray-300">
-            Assignments
+
+          <li>
+            <Link to="/assignments" className="hover:text-gray-300">
+              Assignments
+            </Link>
           </li>
         </ul>
 
@@ -69,48 +87,73 @@ function Dashboard() {
           </p>
         ) : (
           <div className="grid md:grid-cols-3 gap-6">
-            {assignments.map((assignment) => (
-              <div
-                key={assignment._id}
-                className="bg-white p-6 rounded-lg shadow hover:shadow-xl transition"
-              >
-                <h2 className="text-xl font-semibold mb-2">
-                  {assignment.title}
-                </h2>
+            {assignments.map((assignment) => {
 
-                <p className="text-gray-600">
-                  Subject: {assignment.subject}
-                </p>
+              // Match submission with assignment
+              const submission = submissions.find(
+                (s) => s.assignment._id === assignment._id
+              );
 
-                <p className="text-gray-600 mb-4">
-                  Due: {new Date(
-                    assignment.dueDate
-                  ).toDateString()}
-                </p>
+              return (
+                <div
+                  key={assignment._id}
+                  className="bg-white p-6 rounded-lg shadow hover:shadow-xl transition"
+                >
+                  <h2 className="text-xl font-semibold mb-2">
+                    {assignment.title}
+                  </h2>
 
-                {role === "student" && (
+                  <p className="text-gray-600">
+                    Subject: {assignment.subject}
+                  </p>
+
+                  <p className="text-gray-600 mb-4">
+                    Due: {new Date(assignment.dueDate).toDateString()}
+                  </p>
+
+                  {/* Student Status Badge */}
+                  {role === "student" && submission && (
+                    <div className="mb-3">
+                      <span
+                        className={`px-3 py-1 rounded text-white text-sm ${
+                          submission.status === "APPROVED"
+                            ? "bg-green-500"
+                            : submission.status === "REJECTED"
+                            ? "bg-red-500"
+                            : "bg-yellow-500"
+                        }`}
+                      >
+                        {submission.status}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Student Button */}
+                  {role === "student" && (
                     <button
                       onClick={() =>
                         navigate(`/assignment/${assignment._id}`)
                       }
                       className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                     >
-                      View & Submit
+                      {submission ? "View Submission" : "View & Submit"}
                     </button>
-                )}
+                  )}
 
-                {role === "staff" && (
-                  <button
-                    onClick={() =>
-                      navigate(`/review/${assignment._id}`)
-                    }
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-                  >
-                    View Submissions
-                  </button>
-                 )}
-              </div>
-            ))}
+                  {/* Staff Button */}
+                  {role === "staff" && (
+                    <button
+                      onClick={() =>
+                        navigate(`/review/${assignment._id}`)
+                      }
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                    >
+                      View Submissions
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
