@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 function Dashboard() {
   const [assignments, setAssignments] = useState([]);
   const [submissions, setSubmissions] = useState([]);
@@ -22,7 +22,7 @@ function Dashboard() {
         );
         setAssignments(assignmentRes.data);
 
-        // If student, fetch submissions
+        // Fetch submissions if student
         if (role === "student") {
           const submissionRes = await axios.get(
             "http://localhost:3000/api/submissions/my",
@@ -89,10 +89,15 @@ function Dashboard() {
           <div className="grid md:grid-cols-3 gap-6">
             {assignments.map((assignment) => {
 
-              // Match submission with assignment
-              const submission = submissions.find(
-                (s) => s.assignment._id === assignment._id
-              );
+              // SAFE submission matching (works whether populated or not)
+              const submission = submissions.find((s) => {
+                const assignmentId =
+                  typeof s.assignment === "object"
+                    ? s.assignment._id
+                    : s.assignment;
+
+                return assignmentId === assignment._id;
+              });
 
               return (
                 <div
@@ -111,7 +116,7 @@ function Dashboard() {
                     Due: {new Date(assignment.dueDate).toDateString()}
                   </p>
 
-                  {/* Student Status Badge */}
+                  {/* Status Badge for Student */}
                   {role === "student" && submission && (
                     <div className="mb-3">
                       <span
@@ -132,7 +137,9 @@ function Dashboard() {
                   {role === "student" && (
                     <button
                       onClick={() =>
-                        navigate(`/assignment/${assignment._id}`)
+                        submission
+                          ? navigate(`/submission/${submission._id}`)
+                          : navigate(`/assignment/${assignment._id}`)
                       }
                       className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                     >
