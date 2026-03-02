@@ -1,14 +1,14 @@
 import Layout from "../components/Layout";
 
-function AssignmentDetails() {
+function ReviewPage() {
   return (
     <Layout>
       <h2 className="text-xl font-bold mb-4">
-        Submit Assignment
+        Review Submissions
       </h2>
-      {/* keep your existing upload form here */}
+      {/* move your review logic here */}
     </Layout>
   );
 }
 
-export default AssignmentDetails;
+export default ReviewPage;

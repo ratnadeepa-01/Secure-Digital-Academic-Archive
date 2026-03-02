@@ -6,84 +6,71 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
-
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:3000/api/auth/register", {
-        name,
-        email,
-        password,
-        role,
-      });
+      await axios.post(
+        "http://localhost:3000/api/auth/register",
+        { name, email, password, role: "student" }
+      );
 
-      alert("Registration successful!");
       navigate("/");
-    } catch (error) {
-      alert(error.response?.data?.message || "Registration failed");
+    } catch (err) {
+      alert("Registration failed");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center justify-center">
-      <div className="bg-white p-10 rounded-xl shadow-2xl w-96">
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+    <div className="min-h-screen flex items-center justify-center bg-[#f8f7fc]">
+      <form
+        onSubmit={submitHandler}
+        className="bg-white p-10 rounded-2xl shadow-lg w-96"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">
           Create Account
         </h2>
 
-        <form onSubmit={handleRegister} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Name"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+        <input
+          type="text"
+          placeholder="Full Name"
+          className="w-full mb-4 p-3 border rounded-lg"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full mb-4 p-3 border rounded-lg"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full mb-6 p-3 border rounded-lg"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-          <select
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="student">Student</option>
-            <option value="staff">Staff</option>
-            <option value="admin">Admin</option>
-          </select>
+        <button
+          type="submit"
+          className="w-full bg-[#b8a4f2] text-white p-3 rounded-lg hover:bg-[#a78bfa] transition"
+        >
+          Register
+        </button>
 
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition duration-300"
-          >
-            Register
-          </button>
-        </form>
-
-        <p className="text-sm text-center mt-4 text-gray-600">
+        <p className="mt-4 text-sm text-center">
           Already have an account?{" "}
-          <Link to="/" className="text-indigo-600 font-semibold">
+          <Link to="/" className="text-[#a78bfa]">
             Login
           </Link>
         </p>
-      </div>
+      </form>
     </div>
   );
 }
