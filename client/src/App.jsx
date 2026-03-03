@@ -6,11 +6,27 @@ import StaffDashboard from "./pages/StaffDashboard";
 import AssignmentDetails from "./pages/AssignmentDetails";
 import SubmissionDetails from "./pages/SubmissionDetails";
 import ReviewPage from "./pages/ReviewPage";
+import MySubmissions from "./pages/MySubmissions";
+import CreateAssignment from "./pages/CreateAssignment";
 
-function App() {
+const ProtectedRoute = ({ children, allowedRole }) => {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
+  // If no token, redirect to login
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  // If role isn't matched, redirect to their home dashboard
+  if (allowedRole && role !== allowedRole) {
+    return <Navigate to={role === "staff" ? "/staff" : "/dashboard"} replace />;
+  }
+
+  return children;
+};
+
+function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -22,24 +38,62 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            token && role === "student"
-              ? <StudentDashboard />
-              : <Navigate to="/" />
+            <ProtectedRoute allowedRole="student">
+              <StudentDashboard />
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/staff"
           element={
-            token && role === "staff"
-              ? <StaffDashboard />
-              : <Navigate to="/" />
+            <ProtectedRoute allowedRole="staff">
+              <StaffDashboard />
+            </ProtectedRoute>
           }
         />
 
-        <Route path="/assignment/:id" element={<AssignmentDetails />} />
-        <Route path="/submission/:id" element={<SubmissionDetails />} />
-        <Route path="/review/:id" element={<ReviewPage />} />
+        <Route
+          path="/my-submissions"
+          element={
+            <ProtectedRoute allowedRole="student">
+              <MySubmissions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create-assignment"
+          element={
+            <ProtectedRoute allowedRole="staff">
+              <CreateAssignment />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Assignments and Submissions can be viewed by the relevant role, 
+            so we just protect them from non-logged in users */}
+        <Route
+          path="/assignment/:id"
+          element={
+            <ProtectedRoute>
+              <AssignmentDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/submission/:id"
+          element={
+            <ProtectedRoute>
+              <SubmissionDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/review/:id"
+          element={
+            <ReviewPage />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

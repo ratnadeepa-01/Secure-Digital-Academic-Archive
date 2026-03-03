@@ -1,13 +1,33 @@
 function Topbar({ role }) {
-  return (
-    <div className="flex justify-between items-center mb-8">
-      <h1 className="text-2xl font-bold">
-        {role === "student" ? "Student Portal" : "Staff Portal"}
-      </h1>
+  const name = localStorage.getItem("name") || "User";
+  const email = localStorage.getItem("email") || "";
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
-      <span className="bg-gray-200 px-3 py-1 rounded-full text-sm">
-        {role?.toUpperCase()}
+  return (
+    <div className="bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between">
+      <span className="text-sm font-semibold text-gray-700">
+        {role === "student" ? "Student Portal" : "Staff Portal"}
       </span>
+
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          {role}
+        </span>
+        <div className="text-right hidden sm:block">
+          <p className="text-sm font-semibold text-gray-800 leading-tight">{name}</p>
+          {email && (
+            <p className="text-xs text-gray-400 leading-tight">{email}</p>
+          )}
+        </div>
+        <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+          {initials}
+        </div>
+      </div>
     </div>
   );
 }

@@ -77,3 +77,22 @@ exports.updateAssignmentStatus = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+// @desc    Get single assignment by ID
+// @route   GET /api/assignments/:id
+// @access  Protected
+exports.getAssignmentById = async (req, res) => {
+  try {
+    const assignment = await Assignment.findById(req.params.id)
+      .populate("createdBy", "name email");
+
+    if (!assignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.status(200).json(assignment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

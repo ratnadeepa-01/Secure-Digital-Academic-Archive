@@ -71,17 +71,17 @@ exports.reviewSubmission = async (req, res) => {
 // @desc Student view their submissions
 // @route GET /api/submissions/my
 // @access Student only
-  exports.getMySubmissions = async (req, res) => {
-    try {
-      const submissions = await Submission.find({
-        student: req.user._id
-      }).populate("assignment");
+exports.getMySubmissions = async (req, res) => {
+  try {
+    const submissions = await Submission.find({
+      student: req.user._id
+    }).populate("assignment");
 
-      res.status(200).json(submissions);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  };
+    res.status(200).json(submissions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // @desc Student view their submissions
 // @route GET /api/submissions/my
@@ -95,6 +95,41 @@ exports.getSubmissionsByAssignment = async (req, res) => {
       .populate("assignment", "title");
 
     res.status(200).json(submissions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc Staff get ALL submissions (across all assignments)
+// @route GET /api/submissions/all
+// @access Staff only
+exports.getAllSubmissions = async (req, res) => {
+  try {
+    const submissions = await Submission.find()
+      .populate("student", "name email")
+      .populate("assignment", "title subject dueDate")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(submissions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc Get a single submission by ID
+// @route GET /api/submissions/:id
+// @access Protected
+exports.getSubmissionById = async (req, res) => {
+  try {
+    const submission = await Submission.findById(req.params.id)
+      .populate("student", "name email")
+      .populate("assignment", "title subject dueDate description");
+
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found" });
+    }
+
+    res.status(200).json(submission);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

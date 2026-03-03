@@ -8,11 +8,16 @@ const {
   submitAssignment,
   reviewSubmission,
   getMySubmissions,
-  getSubmissionsByAssignment
+  getSubmissionsByAssignment,
+  getAllSubmissions,
+  getSubmissionById
 } = require("../controllers/submissionController");
 
 // 🔹 STUDENT - Get my submissions
 router.get("/my", protect, authorize("student"), getMySubmissions);
+
+// 🔹 STAFF - Get ALL submissions (across all assignments)
+router.get("/all", protect, authorize("staff"), getAllSubmissions);
 
 // 🔹 STAFF - Get submissions for specific assignment
 router.get(
@@ -21,6 +26,9 @@ router.get(
   authorize("staff"),
   getSubmissionsByAssignment
 );
+
+// 🔹 GET single submission by ID
+router.get("/:id", protect, getSubmissionById);
 
 // 🔹 STUDENT - Submit assignment
 router.post(
