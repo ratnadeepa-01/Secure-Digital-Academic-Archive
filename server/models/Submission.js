@@ -14,10 +14,14 @@ const submissionSchema = new mongoose.Schema(
       required: true
     },
 
-    file: {
-      type: String,
-      required: true
-    },
+    files: [
+      {
+        filename: String,
+        path: String,
+        mimetype: String,
+        size: Number
+      }
+    ],
 
     status: {
       type: String,
@@ -33,7 +37,27 @@ const submissionSchema = new mongoose.Schema(
     version: {
       type: Number,
       default: 1
-    }
+    },
+
+    history: [
+      {
+        version: Number,
+        files: [
+          {
+            filename: String,
+            path: String,
+            mimetype: String,
+            size: Number
+          }
+        ],
+        status: String,
+        remarks: String,
+        updatedAt: {
+          type: Date,
+          default: Date.now
+        }
+      }
+    ]
   },
   {
     timestamps: true

@@ -16,15 +16,46 @@ exports.submitAssignment = async (req, res) => {
       return res.status(404).json({ message: "Assignment not found" });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "No files uploaded" });
     }
 
-    const submission = await Submission.create({
+    const fileData = req.files.map(file => ({
+      filename: file.originalname,
+      path: file.path,
+      mimetype: file.mimetype,
+      size: file.size
+    }));
+
+    let submission = await Submission.findOne({
       assignment: assignment._id,
-      student: req.user._id,
-      file: req.file.path
+      student: req.user._id
     });
+
+    if (submission) {
+      // Version History logic
+      submission.history.push({
+        version: submission.version,
+        files: submission.files,
+        status: submission.status,
+        remarks: submission.remarks,
+        updatedAt: submission.updatedAt
+      });
+
+      submission.version += 1;
+      submission.files = fileData;
+      submission.status = "PENDING";
+      submission.remarks = "";
+
+      await submission.save();
+    } else {
+      submission = await Submission.create({
+        assignment: assignment._id,
+        student: req.user._id,
+        files: fileData,
+        version: 1
+      });
+    }
 
     return res.status(201).json({
       message: "Assignment submitted successfully",

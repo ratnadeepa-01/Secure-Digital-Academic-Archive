@@ -101,9 +101,8 @@ function StatCard({ title, value, icon, iconBg, iconColor }) {
 }
 
 function AssignmentCard({ assignment, submission, onAction }) {
-  const fileName = submission
-    ? submission.file.split(/[\\/]/).pop()
-    : null;
+  const legacyFile = submission?.file;
+  const fileName = submission?.files?.[0]?.filename || (submission?.files?.[0]?.path && submission.files[0].path.split(/[\\/]/).pop()) || (legacyFile ? legacyFile.split(/[\\/]/).pop() : null);
 
   const dueDateStr = new Date(assignment.dueDate).toLocaleDateString("en-US", {
     month: "short",

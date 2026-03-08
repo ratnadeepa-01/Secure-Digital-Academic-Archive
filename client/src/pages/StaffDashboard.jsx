@@ -83,8 +83,8 @@ function StaffDashboard() {
             key={tab}
             onClick={() => setFilter(tab)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filter === tab
-                ? "bg-indigo-600 text-white"
-                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+              ? "bg-indigo-600 text-white"
+              : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}
           >
             {tab} <span className="opacity-70 ml-1">({assignmentCounts[tab]})</span>
@@ -141,8 +141,9 @@ function SubmissionRow({ submission, onReview }) {
     hour: "2-digit", minute: "2-digit", hour12: false
   });
 
-  const fileName = submission.file.split(/[\\/]/).pop();
-  const fileUrl = `http://localhost:3000/uploads/${fileName}`;
+  const legacyFileStr = submission.file;
+  const legacyFileName = legacyFileStr ? legacyFileStr.split(/[\\/]/).pop() : null;
+  const legacyFileUrl = legacyFileName ? `http://localhost:3000/${legacyFileStr}` : "#";
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm flex flex-col md:flex-row gap-6">
@@ -159,16 +160,38 @@ function SubmissionRow({ submission, onReview }) {
         </div>
         <p className="text-sm text-gray-500 mb-3">{submission.assignment?.title}</p>
 
-        <div className="flex items-center gap-6 text-xs text-gray-500">
+        <div className="flex items-center gap-6 text-xs text-gray-500 mb-4">
           <span>Submitted: {submittedStr}</span>
-          <a
-            href={fileUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 text-indigo-500 flex-shrink-0 hover:underline"
-          >
-            <Paperclip size={13} /> {fileName}
-          </a>
+          <span>Version: {submission.version}</span>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {submission.files && submission.files.length > 0 ? (
+            submission.files.map((f, i) => (
+              <a
+                key={i}
+                href={`http://localhost:3000/${f.path}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-lg text-indigo-500 hover:bg-indigo-50 transition-colors"
+              >
+                <Paperclip size={12} />
+                <span className="max-w-[120px] truncate">{f.filename || (f.path && f.path.split(/[\\/]/).pop()) || "Unknown File"}</span>
+              </a>
+            ))
+          ) : legacyFileName ? (
+            <a
+              href={legacyFileUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-lg text-indigo-500 hover:bg-indigo-50 transition-colors"
+            >
+              <Paperclip size={12} />
+              <span className="max-w-[120px] truncate">{legacyFileName}</span>
+            </a>
+          ) : (
+            <span className="text-xs text-gray-400 italic">No files provided</span>
+          )}
         </div>
       </div>
 

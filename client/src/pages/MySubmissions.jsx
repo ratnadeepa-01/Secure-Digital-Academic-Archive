@@ -93,7 +93,9 @@ function SubmissionCard({ submission, onClick }) {
         REJECTED: <XCircle size={12} className="mr-1" />,
     };
 
-    const fileName = submission.file.split(/[\\/]/).pop();
+    const legacyFile = submission.file;
+    const fileCount = legacyFile && !submission.files?.length ? 1 : (submission.files?.length || 0);
+    const firstFileName = submission.files?.[0]?.filename || (submission.files?.[0]?.path && submission.files[0].path.split(/[\\/]/).pop()) || (legacyFile ? legacyFile.split(/[\\/]/).pop() : "No file");
     const submittedStr = new Date(submission.createdAt).toLocaleDateString("en-US", {
         month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit"
     });
@@ -113,7 +115,9 @@ function SubmissionCard({ submission, onClick }) {
 
             <div className="flex items-center gap-2 text-xs text-indigo-500 truncate mt-1">
                 <Paperclip size={13} className="flex-shrink-0" />
-                <span className="truncate">{fileName}</span>
+                <span className="truncate">
+                    {fileCount > 1 ? `${firstFileName} (+ ${fileCount - 1} more)` : firstFileName}
+                </span>
             </div>
 
             <button

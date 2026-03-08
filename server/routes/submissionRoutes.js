@@ -35,7 +35,7 @@ router.post(
   "/:assignmentId",
   protect,
   authorize("student"),
-  upload.single("file"),
+  upload.array("files", 10),
   submitAssignment
 );
 
