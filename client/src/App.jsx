@@ -26,76 +26,80 @@ const ProtectedRoute = ({ children, allowedRole }) => {
   return children;
 };
 
+import { ThemeProvider } from "./context/ThemeContext";
+
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute allowedRole="student">
-              <StudentDashboard />
-            </ProtectedRoute>
-          }
-        />
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/staff"
-          element={
-            <ProtectedRoute allowedRole="staff">
-              <StaffDashboard />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/staff"
+            element={
+              <ProtectedRoute allowedRole="staff">
+                <StaffDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/my-submissions"
-          element={
-            <ProtectedRoute allowedRole="student">
-              <MySubmissions />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/create-assignment"
-          element={
-            <ProtectedRoute allowedRole="staff">
-              <CreateAssignment />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/my-submissions"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <MySubmissions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-assignment"
+            element={
+              <ProtectedRoute allowedRole="staff">
+                <CreateAssignment />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Assignments and Submissions can be viewed by the relevant role, 
-            so we just protect them from non-logged in users */}
-        <Route
-          path="/assignment/:id"
-          element={
-            <ProtectedRoute>
-              <AssignmentDetails />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/submission/:id"
-          element={
-            <ProtectedRoute>
-              <SubmissionDetails />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/review/:id"
-          element={
-            <ReviewPage />
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          {/* Assignments and Submissions can be viewed by the relevant role, 
+              so we just protect them from non-logged in users */}
+          <Route
+            path="/assignment/:id"
+            element={
+              <ProtectedRoute>
+                <AssignmentDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/submission/:id"
+            element={
+              <ProtectedRoute>
+                <SubmissionDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/review/:id"
+            element={
+              <ReviewPage />
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

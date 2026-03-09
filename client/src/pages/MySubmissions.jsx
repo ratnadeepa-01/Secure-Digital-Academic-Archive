@@ -1,133 +1,124 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
-import {
-    FileText,
-    Clock,
-    CheckCircle,
-    XCircle,
-    Paperclip,
-    ArrowRight,
-    Loader2
+import { 
+  FileText, 
+  Calendar, 
+  Clock, 
+  CheckCircle, 
+  XCircle, 
+  History, 
+  ChevronRight,
+  ClipboardList,
+  Paperclip,
+  AlertCircle
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function MySubmissions() {
-    const [submissions, setSubmissions] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const token = localStorage.getItem("token");
-    const navigate = useNavigate();
+  const [submissions, setSubmissions] = useState([]);
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await axios.get("http://localhost:3000/api/submissions/my", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setSubmissions(res.data);
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [token]);
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/api/submissions/my", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setSubmissions(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchSubmissions();
+  }, [token]);
 
-    if (loading) {
-        return (
-            <Layout>
-                <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin text-indigo-500" size={28} />
+  return (
+    <Layout>
+      <div className="mb-10">
+        <h1 className="text-3xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">My Submissions</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Review your submission status and feedback history.</p>
+      </div>
+
+      <div className="space-y-6">
+        {submissions.length > 0 ? (
+          submissions.map((sub) => (
+            <div
+              key={sub._id}
+              className="bg-white dark:bg-dark-card rounded-3xl border border-gray-100 dark:border-dark-border p-8 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row items-start md:items-center gap-8 group"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center text-primary-500 flex-shrink-0 border border-primary-100 dark:border-primary-500/20 shadow-sm">
+                <ClipboardList size={24} />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="text-lg font-black text-gray-900 dark:text-white truncate tracking-tight">
+                    {sub.assignment?.title || "Unknown Assignment"}
+                  </h3>
+                  <StatusBadge status={sub.status} />
                 </div>
-            </Layout>
-        );
-    }
-
-    return (
-        <Layout>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">My Submissions</h1>
-            <p className="text-gray-500 text-sm mb-7">View all your submitted assignments and staff remarks</p>
-
-            {submissions.length === 0 ? (
-                <div className="bg-white rounded-xl border border-gray-100 p-8 text-center shadow-sm">
-                    <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
-                        <FileText size={20} />
-                    </div>
-                    <h3 className="text-gray-900 font-semibold mb-1">No submissions yet</h3>
-                    <p className="text-sm text-gray-500 mb-4">You haven&apos;t submitted any assignments.</p>
-                    <Link
-                        to="/dashboard"
-                        className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700"
-                    >
-                        Go to Assignments <ArrowRight size={16} />
-                    </Link>
+                
+                <div className="flex flex-wrap gap-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-3">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar size={14} className="text-gray-300" />
+                    v{sub.version}.0
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={14} className="text-gray-300" />
+                    {new Date(sub.createdAt).toLocaleDateString()}
+                  </span>
+                  {sub.files?.length > 0 && (
+                    <span className="flex items-center gap-1.5 text-primary-500">
+                      <Paperclip size={14} />
+                      {sub.files.length} {sub.files.length === 1 ? "File" : "Files"}
+                    </span>
+                  )}
                 </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {submissions.map((sub) => (
-                        <SubmissionCard
-                            key={sub._id}
-                            submission={sub}
-                            onClick={() => navigate(`/submission/${sub._id}`)}
-                        />
-                    ))}
+              </div>
+
+              <div className="flex items-center gap-4 w-full md:w-auto">
+                <button
+                  onClick={() => navigate(`/submission/${sub._id}`)}
+                  className="flex-1 md:flex-none px-6 py-3 rounded-2xl bg-gray-50 dark:bg-dark-bg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-border text-xs font-black uppercase tracking-widest transition-all border border-gray-100 dark:border-dark-border"
+                >
+                  Details
+                </button>
+                <div className="hidden md:block p-2 rounded-xl group-hover:bg-primary-500 group-hover:text-white text-gray-300 transition-all duration-300">
+                  <ChevronRight size={20} />
                 </div>
-            )}
-        </Layout>
-    );
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-20 flex flex-col items-center justify-center bg-white dark:bg-dark-card rounded-3xl border border-dashed border-gray-200 dark:border-dark-border">
+            <AlertCircle size={48} className="text-gray-200 mb-4" />
+            <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">No submissions recorded yet</p>
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
 }
 
-function SubmissionCard({ submission, onClick }) {
-    const assignment = typeof submission.assignment === "object" ? submission.assignment : {};
+function StatusBadge({ status }) {
+  const map = {
+    PENDING: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    APPROVED: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    REJECTED: "bg-red-500/10 text-red-500 dark:text-red-400 border-red-500/20",
+  };
+  const label = {
+    PENDING: "Pending",
+    APPROVED: "Approved",
+    REJECTED: "Rejected",
+  };
 
-    const statusStyles = {
-        PENDING: "bg-amber-50 text-amber-600 border border-amber-200",
-        APPROVED: "bg-green-50 text-green-600 border border-green-200",
-        REJECTED: "bg-red-50 text-red-500 border border-red-200",
-    };
-
-    const statusIcons = {
-        PENDING: <Clock size={12} className="mr-1" />,
-        APPROVED: <CheckCircle size={12} className="mr-1" />,
-        REJECTED: <XCircle size={12} className="mr-1" />,
-    };
-
-    const legacyFile = submission.file;
-    const fileCount = legacyFile && !submission.files?.length ? 1 : (submission.files?.length || 0);
-    const firstFileName = submission.files?.[0]?.filename || (submission.files?.[0]?.path && submission.files[0].path.split(/[\\/]/).pop()) || (legacyFile ? legacyFile.split(/[\\/]/).pop() : "No file");
-    const submittedStr = new Date(submission.createdAt).toLocaleDateString("en-US", {
-        month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit"
-    });
-
-    return (
-        <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm flex flex-col gap-3">
-            <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                    <h3 className="font-semibold text-gray-900 text-sm truncate">{assignment.title || "Assignment"}</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">Submitted: {submittedStr}</p>
-                </div>
-                <span className={`flex items-center flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${statusStyles[submission.status]}`}>
-                    {statusIcons[submission.status]}
-                    {submission.status}
-                </span>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-indigo-500 truncate mt-1">
-                <Paperclip size={13} className="flex-shrink-0" />
-                <span className="truncate">
-                    {fileCount > 1 ? `${firstFileName} (+ ${fileCount - 1} more)` : firstFileName}
-                </span>
-            </div>
-
-            <button
-                onClick={onClick}
-                className="mt-2 flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-                View Details <ArrowRight size={14} />
-            </button>
-        </div>
-    );
+  return (
+    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border shadow-sm ${map[status] || "bg-gray-100 text-gray-400 border-gray-200"}`}>
+      {label[status] || status}
+    </span>
+  );
 }
 
 export default MySubmissions;

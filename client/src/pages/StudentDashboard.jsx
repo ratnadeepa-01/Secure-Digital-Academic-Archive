@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
+import StatsCard from "../components/StatsCard";
 import {
   FileText,
   Clock,
@@ -10,7 +11,8 @@ import {
   Calendar,
   Paperclip,
   ArrowRight,
-  Upload
+  Upload,
+  AlertCircle
 } from "lucide-react";
 
 function StudentDashboard() {
@@ -46,57 +48,55 @@ function StudentDashboard() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Dashboard</h1>
-      <p className="text-gray-500 text-sm mb-7">Track your assignments and submissions</p>
-
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <StatCard title="TOTAL" value={total} icon={<FileText size={20} />} iconBg="bg-indigo-50" iconColor="text-indigo-500" />
-        <StatCard title="PENDING" value={pending} icon={<Clock size={20} />} iconBg="bg-amber-50" iconColor="text-amber-500" />
-        <StatCard title="APPROVED" value={approved} icon={<CheckCircle size={20} />} iconBg="bg-green-50" iconColor="text-green-500" />
-        <StatCard title="REJECTED" value={rejected} icon={<XCircle size={20} />} iconBg="bg-red-50" iconColor="text-red-400" />
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Student Dashboard</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Welcome back! Here's an overview of your academic progress.</p>
       </div>
 
-      <h2 className="text-base font-semibold text-gray-900 mb-4">Your Assignments</h2>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <StatsCard title="Total Assignments" value={total} variant="purple" icon={FileText} />
+        <StatsCard title="Pending Review" value={pending} variant="blue" icon={Clock} />
+        <StatsCard title="Approved" value={approved} variant="green" icon={CheckCircle} />
+        <StatsCard title="Rejected" value={rejected} variant="orange" icon={XCircle} />
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {assignments.map((assignment) => {
-          const submission = submissions.find(
-            (s) =>
-              (typeof s.assignment === "object"
-                ? s.assignment._id
-                : s.assignment) === assignment._id
-          );
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Active Assignments</h2>
+        <button className="text-primary-500 text-xs font-bold uppercase tracking-widest hover:underline">View All</button>
+      </div>
 
-          return (
-            <AssignmentCard
-              key={assignment._id}
-              assignment={assignment}
-              submission={submission}
-              onAction={() =>
-                submission
-                  ? navigate(`/submission/${submission._id}`)
-                  : navigate(`/assignment/${assignment._id}`)
-              }
-            />
-          );
-        })}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {assignments.length > 0 ? (
+          assignments.map((assignment) => {
+            const submission = submissions.find(
+              (s) =>
+                (typeof s.assignment === "object"
+                  ? s.assignment._id
+                  : s.assignment) === assignment._id
+            );
+
+            return (
+              <AssignmentCard
+                key={assignment._id}
+                assignment={assignment}
+                submission={submission}
+                onAction={() =>
+                  submission
+                    ? navigate(`/submission/${submission._id}`)
+                    : navigate(`/assignment/${assignment._id}`)
+                }
+              />
+            );
+          })
+        ) : (
+          <div className="col-span-full py-12 flex flex-col items-center justify-center bg-white dark:bg-dark-card rounded-3xl border border-dashed border-gray-200 dark:border-dark-border">
+            <AlertCircle size={40} className="text-gray-300 mb-2" />
+            <p className="text-gray-400 font-medium">No assignments found</p>
+          </div>
+        )}
       </div>
     </Layout>
-  );
-}
-
-function StatCard({ title, value, icon, iconBg, iconColor }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 flex items-center justify-between shadow-sm">
-      <div>
-        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">{title}</p>
-        <p className="text-3xl font-bold text-gray-900">{value}</p>
-      </div>
-      <div className={`w-11 h-11 rounded-full ${iconBg} ${iconColor} flex items-center justify-center`}>
-        {icon}
-      </div>
-    </div>
   );
 }
 
@@ -111,41 +111,44 @@ function AssignmentCard({ assignment, submission, onAction }) {
   });
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm flex flex-col gap-3">
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900 text-sm truncate">{assignment.title}</h3>
-          <p className="text-xs text-gray-400 mt-0.5">{assignment.subject}</p>
+    <div className="bg-white dark:bg-dark-card rounded-3xl border border-gray-100 dark:border-dark-border p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
+      <div className="flex items-start justify-between mb-4">
+        <div className="bg-primary-50 dark:bg-primary-900/20 p-2.5 rounded-2xl text-primary-500">
+           <BookOpen size={20} />
         </div>
         <StatusBadge status={submission ? submission.status : "NOT_SUBMITTED"} />
       </div>
 
-      <div className="flex items-center gap-4 text-xs text-gray-500">
-        <span className="flex items-center gap-1">
-          <Calendar size={13} className="text-gray-400" />
-          Due: {dueDateStr}
-        </span>
-        {fileName && (
-          <span className="flex items-center gap-1 text-indigo-500 truncate max-w-[140px]">
-            <Paperclip size={13} />
-            {fileName}
+      <div className="flex-1 min-w-0 mb-6">
+        <h3 className="font-black text-gray-900 dark:text-white text-base truncate mb-1 tracking-tight">{assignment.title}</h3>
+        <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-tighter">{assignment.subject || "Academic Sub"}</p>
+        <div className="mt-4 flex items-center gap-4 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+          <span className="flex items-center gap-1.5">
+            <Clock size={14} className="text-gray-400" />
+            {dueDateStr}
           </span>
-        )}
+          {fileName && (
+            <span className="flex items-center gap-1.5 text-primary-500 truncate max-w-[120px]">
+              <Paperclip size={14} />
+              Attached
+            </span>
+          )}
+        </div>
       </div>
 
       <button
         onClick={onAction}
-        className={`flex items-center gap-2 self-start px-4 py-2 rounded-lg text-sm font-medium transition-colors ${submission
-            ? "border border-gray-200 text-gray-700 hover:bg-gray-50"
-            : "bg-indigo-600 text-white hover:bg-indigo-700"
+        className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-black transition-all duration-200 tracking-tight ${submission
+            ? "bg-gray-50 dark:bg-dark-bg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-border border border-gray-100 dark:border-dark-border"
+            : "bg-primary-500 text-white hover:bg-primary-600 shadow-lg shadow-primary-500/20"
           }`}
       >
         {submission ? (
-          <>View Details <ArrowRight size={14} /></>
+          <>View Submission <ArrowRight size={16} /></>
         ) : (
           <>
-            <Upload size={14} />
-            Submit Assignment <ArrowRight size={14} />
+            <Upload size={16} />
+            Submit Now
           </>
         )}
       </button>
@@ -155,23 +158,24 @@ function AssignmentCard({ assignment, submission, onAction }) {
 
 function StatusBadge({ status }) {
   const map = {
-    PENDING: "bg-amber-50 text-amber-600 border border-amber-200",
-    APPROVED: "bg-green-50 text-green-600 border border-green-200",
-    REJECTED: "bg-red-50 text-red-500 border border-red-200",
-    NOT_SUBMITTED: "bg-gray-100 text-gray-500 border border-gray-200",
+    PENDING: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    APPROVED: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    REJECTED: "bg-red-500/10 text-red-500 dark:text-red-400 border-red-500/20",
+    NOT_SUBMITTED: "bg-gray-100 dark:bg-dark-border text-gray-500 dark:text-gray-400 border-gray-200 dark:border-dark-border",
   };
   const label = {
-    PENDING: "● PENDING",
-    APPROVED: "● APPROVED",
-    REJECTED: "● REJECTED",
-    NOT_SUBMITTED: "● NOT SUBMITTED",
+    PENDING: "Pending",
+    APPROVED: "Approved",
+    REJECTED: "Rejected",
+    NOT_SUBMITTED: "Missing",
   };
 
   return (
-    <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${map[status] || map.NOT_SUBMITTED}`}>
-      {label[status] || "● NOT SUBMITTED"}
+    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border shadow-sm ${map[status] || map.NOT_SUBMITTED}`}>
+      {label[status] || "Missing"}
     </span>
   );
 }
 
 export default StudentDashboard;
+Dashboard;

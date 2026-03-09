@@ -9,5 +9,13 @@
 }
 
 body {
-  background: #f3f4f8;
+  @apply bg-[#f3f4f8] transition-colors duration-200 text-gray-900;
+}
+
+.dark body {
+  @apply bg-[#0f111a] text-gray-100;
+}
+
+* {
+  @apply transition-colors duration-200;
 }
