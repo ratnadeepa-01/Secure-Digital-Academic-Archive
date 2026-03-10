@@ -8,24 +8,27 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#8b5cf6', // Indigo-like purple from Behance
-          600: '#7c3aed',
-          700: '#6d28d9',
-          800: '#5b21b6',
-          900: '#4c1d95',
+        // Semantic surface tokens — driven by CSS variables in index.css
+        theme: {
+          bg:     'var(--color-bg)',
+          surface:'var(--color-surface)',
+          card:   'var(--color-card)',
+          sidebar:'var(--color-sidebar)',
+          border: 'var(--color-border)',
+          'border-soft': 'var(--color-border-soft)',
+          text:   'var(--color-text)',
+          'text-2':'var(--color-text-2)',
+          'text-3':'var(--color-text-3)',
         },
-        sidebar: "#1a1d2e",
-        dark: {
-          bg: "#0f111a",
-          card: "#1a1d2e",
-          border: "#2d334a"
-        }
+        // Brand color — also driven by variable (indigo-500 light / indigo-400 dark)
+        brand: {
+          DEFAULT: 'var(--color-primary)',
+          hover:   'var(--color-primary-hover)',
+          soft:    'var(--color-primary-soft)',
+          soft2:   'var(--color-primary-soft2)',
+        },
+        // Keep named palette colors for status badges etc.
+        // (amber, emerald, red, blue are already in Tailwind defaults)
       }
     },
   },

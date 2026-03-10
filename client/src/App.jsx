@@ -8,6 +8,8 @@ import SubmissionDetails from "./pages/SubmissionDetails";
 import ReviewPage from "./pages/ReviewPage";
 import MySubmissions from "./pages/MySubmissions";
 import CreateAssignment from "./pages/CreateAssignment";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const ProtectedRoute = ({ children, allowedRole }) => {
   const token = localStorage.getItem("token");
@@ -36,6 +38,8 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           {/* Protected Routes */}
           <Route

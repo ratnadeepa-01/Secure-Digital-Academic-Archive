@@ -1,13 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard,
-  FileText,
-  ClipboardCheck,
-  LogOut,
-  Users,
-  BookOpen,
-  Settings,
-  Bell
+  LayoutDashboard, FileText, BookOpen,
+  Settings, Bell, LogOut, Users
 } from "lucide-react";
 
 function Sidebar({ role }) {
@@ -22,42 +16,43 @@ function Sidebar({ role }) {
   const isActive = (path) => location.pathname === path;
 
   const navLinkClass = (path) =>
-    `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive(path)
-      ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
-      : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-dark-border dark:hover:text-gray-200"
+    `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+      isActive(path)
+        ? "bg-brand text-white shadow-sm"
+        : "text-theme-2 hover:bg-theme-border-soft hover:text-theme"
     }`;
 
   return (
     <div
-      className="w-64 flex-shrink-0 flex flex-col bg-white dark:bg-dark-card border-r border-gray-100 dark:border-dark-border transition-colors duration-200"
+      className="w-64 flex-shrink-0 flex flex-col bg-theme-sidebar border-r border-theme"
       style={{ minHeight: "100vh" }}
     >
       {/* Logo */}
-      <div className="px-6 py-8">
+      <div className="px-6 py-7">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center text-white shadow-indigo-500/20 shadow-lg">
-            <BookOpen size={20} />
+          <div className="w-9 h-9 rounded-xl bg-brand flex items-center justify-center text-white shadow-sm">
+            <BookOpen size={18} />
           </div>
           <div>
-            <p className="text-gray-900 dark:text-white font-bold text-lg leading-tight tracking-tight">Dabang</p>
-            <p className="text-gray-400 dark:text-gray-500 text-xs font-medium">SDAA Dashboard</p>
+            <p className="text-theme font-bold text-base leading-tight">Dabang</p>
+            <p className="text-theme-3 text-xs">SDAA Dashboard</p>
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-4 py-4 space-y-2">
-        <p className="px-4 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Main Menu</p>
-        
+      <nav className="flex-1 px-4 space-y-1">
+        <p className="px-4 text-[10px] font-bold text-theme-3 uppercase tracking-widest mb-3">
+          Main Menu
+        </p>
+
         {role === "student" && (
           <>
             <Link to="/dashboard" className={navLinkClass("/dashboard")}>
-              <LayoutDashboard size={18} />
-              Dashboard
+              <LayoutDashboard size={17} /> Dashboard
             </Link>
             <Link to="/my-submissions" className={navLinkClass("/my-submissions")}>
-              <FileText size={18} />
-              My Submissions
+              <FileText size={17} /> My Submissions
             </Link>
           </>
         )}
@@ -65,50 +60,46 @@ function Sidebar({ role }) {
         {role === "staff" && (
           <>
             <Link to="/staff" className={navLinkClass("/staff")}>
-              <LayoutDashboard size={18} />
-              Review
+              <LayoutDashboard size={17} /> Review
             </Link>
             <Link to="/create-assignment" className={navLinkClass("/create-assignment")}>
-              <BookOpen size={18} />
-              New Assignment
+              <BookOpen size={17} /> New Assignment
             </Link>
           </>
         )}
 
         <div className="pt-6">
-           <p className="px-4 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">System</p>
-           <button className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-dark-border transition-all">
-              <Settings size={18} />
-              Settings
-           </button>
-           <button className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-dark-border transition-all">
-              <Bell size={18} />
-              Notifications
-           </button>
+          <p className="px-4 text-[10px] font-bold text-theme-3 uppercase tracking-widest mb-3">
+            System
+          </p>
+          <button className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-theme-2 hover:bg-theme-border-soft hover:text-theme transition-all">
+            <Settings size={17} /> Settings
+          </button>
+          <button className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-theme-2 hover:bg-theme-border-soft hover:text-theme transition-all">
+            <Bell size={17} /> Notifications
+          </button>
         </div>
       </nav>
 
       {/* Bottom */}
-      <div className="px-4 py-6 border-t border-gray-100 dark:border-dark-border space-y-2">
+      <div className="px-4 py-5 border-t border-theme space-y-1">
         {role === "student" && (
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-dark-border transition-all"
+            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-theme-2 hover:bg-theme-border-soft hover:text-theme transition-all"
           >
-            <Users size={18} />
-            Switch to Staff
+            <Users size={17} /> Switch to Staff
           </button>
         )}
         <button
           onClick={logout}
-          className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
+          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all"
         >
-          <LogOut size={18} />
-          Logout
+          <LogOut size={17} /> Logout
         </button>
       </div>
     </div>
   );
 }
 
-export default Sidebar;
+export default Sidebar;

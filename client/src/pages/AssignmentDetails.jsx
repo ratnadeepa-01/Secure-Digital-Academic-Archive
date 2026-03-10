@@ -180,22 +180,22 @@ function AssignmentDetails() {
 
             <div className="flex flex-wrap gap-6 mb-8 py-6 border-y border-gray-100 dark:border-dark-border">
               <div className="flex items-center gap-3">
-                 <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-dark-bg text-gray-400">
-                    <Calendar size={18} />
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Due Date</p>
-                    <p className="text-sm font-black text-gray-700 dark:text-gray-300 tracking-tight">{dueDateStr}</p>
-                 </div>
+                <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-dark-bg text-gray-400">
+                  <Calendar size={18} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Due Date</p>
+                  <p className="text-sm font-black text-gray-700 dark:text-gray-300 tracking-tight">{dueDateStr}</p>
+                </div>
               </div>
               <div className="flex items-center gap-3">
-                 <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-dark-bg text-gray-400">
-                    <Clock size={18} />
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</p>
-                    <p className="text-sm font-black text-gray-700 dark:text-gray-300 tracking-tight">{status === "NOT_SUBMITTED" ? "Awaiting Submission" : "Active"}</p>
-                 </div>
+                <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-dark-bg text-gray-400">
+                  <Clock size={18} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</p>
+                  <p className="text-sm font-black text-gray-700 dark:text-gray-300 tracking-tight">{status === "NOT_SUBMITTED" ? "Awaiting Submission" : "Active"}</p>
+                </div>
               </div>
             </div>
 
@@ -218,7 +218,7 @@ function AssignmentDetails() {
                     <div key={idx} className="flex items-center justify-between bg-white dark:bg-dark-card p-4 rounded-2xl border border-gray-100 dark:border-dark-border shadow-sm">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-10 h-10 bg-primary-50 dark:bg-primary-900/20 rounded-xl flex items-center justify-center text-primary-500">
-                           <Paperclip size={18} />
+                          <Paperclip size={18} />
                         </div>
                         <div className="min-w-0">
                           <p className="text-xs font-black text-gray-700 dark:text-gray-300 truncate">{f.filename || "Submission File"}</p>
@@ -231,8 +231,8 @@ function AssignmentDetails() {
                 </div>
                 {existingSubmission.remarks && (
                   <div className="mt-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-sm italic font-medium">
-                     <span className="font-black uppercase tracking-widest text-[10px] block mb-1">Feedback from Staff</span>
-                     "{existingSubmission.remarks}"
+                    <span className="font-black uppercase tracking-widest text-[10px] block mb-1">Feedback from Staff</span>
+                    "{existingSubmission.remarks}"
                   </div>
                 )}
               </div>
@@ -255,15 +255,15 @@ function AssignmentDetails() {
                     </div>
                     <div className="flex-1 pb-6 border-b border-gray-50 dark:border-dark-border group-last:border-none">
                       <div className="flex items-center justify-between mb-2">
-                         <h4 className="text-sm font-black text-gray-900 dark:text-white tracking-tight">Version v{h.version}.0</h4>
-                         <span className={`text-[9px] font-black uppercase tracking-tighter px-2 py-0.5 rounded-full border ${statusStyles[h.status]}`}>{h.status}</span>
+                        <h4 className="text-sm font-black text-gray-900 dark:text-white tracking-tight">Version v{h.version}.0</h4>
+                        <span className={`text-[9px] font-black uppercase tracking-tighter px-2 py-0.5 rounded-full border ${statusStyles[h.status]}`}>{h.status}</span>
                       </div>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">{new Date(h.updatedAt).toLocaleString()}</p>
                       {h.remarks && <p className="text-xs text-gray-500 dark:text-gray-400 italic mb-3">"{h.remarks}"</p>}
                       <div className="flex flex-wrap gap-2">
                         {h.files.map((f, fi) => (
                           <div key={fi} className="flex items-center gap-1.5 text-[10px] font-bold bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border px-3 py-1.5 rounded-xl text-gray-500 dark:text-gray-400">
-                             <Paperclip size={10} /> {f.filename || "File"}
+                            <Paperclip size={10} /> {f.filename || "File"}
                           </div>
                         ))}
                       </div>
@@ -331,8 +331,8 @@ function AssignmentDetails() {
                   <Upload size={24} />
                 </div>
                 <div>
-                   <span className="block mb-1">Select Files</span>
-                   <span className="text-[9px] font-bold uppercase tracking-widest block opacity-60">PDF, JPG, PNG up to 5MB</span>
+                  <span className="block mb-1">Select Files</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest block opacity-60">PDF, JPG, PNG up to 5MB</span>
                 </div>
               </button>
 
@@ -361,4 +361,3 @@ function AssignmentDetails() {
 }
 
 export default AssignmentDetails;
-ntDetails;
