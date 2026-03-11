@@ -12,6 +12,8 @@ const {
   getAllSubmissions,
   getSubmissionById
 } = require("../controllers/submissionController");
+const validate = require("../middleware/validateMiddleware");
+const { reviewSubmissionSchema } = require("../utils/validation");
 
 // 🔹 STUDENT - Get my submissions
 router.get("/my", protect, authorize("student"), getMySubmissions);
@@ -44,6 +46,7 @@ router.patch(
   "/:id",
   protect,
   authorize("staff"),
+  validate(reviewSubmissionSchema),
   reviewSubmission
 );
 

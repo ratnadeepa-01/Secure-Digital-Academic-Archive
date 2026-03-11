@@ -9,9 +9,11 @@ const {
 } = require("../controllers/assignmentController");
 
 const { protect } = require("../middleware/authMiddleware");
+const validate = require("../middleware/validateMiddleware");
+const { createAssignmentSchema, updateAssignmentStatusSchema } = require("../utils/validation");
 
 // Create assignment (staff only)
-router.post("/", protect, createAssignment);
+router.post("/", protect, validate(createAssignmentSchema), createAssignment);
 
 // Get all assignments (logged-in users)
 router.get("/", protect, getAssignments);
@@ -20,6 +22,6 @@ router.get("/", protect, getAssignments);
 router.get("/:id", protect, getAssignmentById);
 
 // Update status (staff only)
-router.patch("/:id/status", protect, updateAssignmentStatus);
+router.patch("/:id/status", protect, validate(updateAssignmentStatusSchema), updateAssignmentStatus);
 
 module.exports = router;

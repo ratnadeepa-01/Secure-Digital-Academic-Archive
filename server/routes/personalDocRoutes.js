@@ -10,9 +10,11 @@ const {
     getDocById,
     deleteDoc
 } = require("../controllers/personalDocController");
+const validate = require("../middleware/validateMiddleware");
+const { uploadDocSchema } = require("../utils/validation");
 
 // Upload a personal document (file required)
-router.post("/", protect, upload.single("file"), uploadDoc);
+router.post("/", protect, upload.single("file"), validate(uploadDocSchema), uploadDoc);
 
 // Get all documents of the logged-in user
 router.get("/", protect, getMyDocs);
