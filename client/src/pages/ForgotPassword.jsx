@@ -44,7 +44,16 @@ function ForgotPassword() {
           {message ? (
             <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-6 rounded-xl text-center">
               <CheckCircle size={40} className="text-emerald-500 mx-auto mb-3" />
-              <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">{message}</p>
+              <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium mb-4">{message}</p>
+              <button
+                onClick={() => {
+                  setMessage("");
+                  setError("");
+                }}
+                className="text-xs text-brand font-semibold hover:underline"
+              >
+                Didn't receive the email? Click here to resend
+              </button>
             </div>
           ) : (
             <form onSubmit={submitHandler} className="space-y-5">

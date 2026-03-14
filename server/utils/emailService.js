@@ -2,11 +2,19 @@ const { Resend } = require("resend");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazily initialize Resend to avoid crashes if API key is missing during module load
+let resendInstance = null;
+const getResend = () => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey || apiKey === "your_resend_api_key" || apiKey.includes("your_")) {
+    return null;
+  }
+  if (!resendInstance) {
+    resendInstance = new Resend(apiKey);
+  }
+  return resendInstance;
+};
 
-// IMPORTANT: Resend requires a verified domain to send emails.
-// For testing, you MUST use 'onboarding@resend.dev'.
-// You cannot use a personal gmail.com address as the 'from' field unless you verify the gmail.com domain (which is impossible).
 const fromEmail = "onboarding@resend.dev";
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
@@ -14,6 +22,17 @@ const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
  * Send Welcome Email
  */
 exports.sendWelcomeEmail = async (user) => {
+  const resend = getResend();
+  
+  if (!resend) {
+    console.log("-----------------------------------------");
+    console.log("DEV MODE: WELCOME EMAIL (No API Key)");
+    console.log(`To: ${user.email}`);
+    console.log(`Welcome, ${user.name}!`);
+    console.log("-----------------------------------------");
+    return { success: true, devMode: true };
+  }
+
   try {
     const { data, error } = await resend.emails.send({
       from: fromEmail,
@@ -47,6 +66,18 @@ exports.sendWelcomeEmail = async (user) => {
  */
 exports.sendPasswordResetEmail = async (user, resetToken) => {
   const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
+  const resend = getResend();
+
+  // If no valid API key, log to console and return success
+  if (!resend) {
+    console.log("-----------------------------------------");
+    console.log("DEV MODE: PASSWORD RESET LINK");
+    console.log(`To: ${user.email}`);
+    console.log(`Link: ${resetUrl}`);
+    console.log("-----------------------------------------");
+    return { success: true, devMode: true };
+  }
+
   try {
     const { data, error } = await resend.emails.send({
       from: fromEmail,
