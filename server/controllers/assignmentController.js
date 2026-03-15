@@ -1,4 +1,7 @@
 const Assignment = require("../models/Assignment");
+const User = require("../models/User");
+const Submission = require("../models/Submission");
+
 
 // @desc    Create new assignment
 // @route   POST /api/assignments
@@ -92,6 +95,38 @@ exports.getAssignmentById = async (req, res) => {
     }
 
     res.status(200).json(assignment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// @desc    Get assignments stats (total students vs submitted)
+// @route   GET /api/assignments/stats/all
+// @access  Protected
+exports.getAssignmentStats = async (req, res) => {
+  try {
+    const totalStudents = await User.countDocuments({ role: "student" });
+
+    const assignments = await Assignment.find().select("title dueDate");
+
+    const stats = await Promise.all(
+      assignments.map(async (assignment) => {
+        const submittedCount = await Submission.countDocuments({
+          assignment: assignment._id,
+        });
+
+        return {
+          _id: assignment._id,
+          title: assignment.title,
+          dueDate: assignment.dueDate,
+          totalStudents,
+          submittedCount,
+        };
+      })
+    );
+
+    res.status(200).json(stats);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

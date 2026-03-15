@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 import StatsCard from "../components/StatsCard";
+import SubmissionGraph from "../components/SubmissionGraph";
 import {
   ClipboardList, Clock, CheckCircle, XCircle,
   Paperclip, Check, X, MessageSquare, AlertCircle,
@@ -70,6 +71,8 @@ function StaffDashboard() {
         <StatsCard title="Approved"        value={approved} variant="green"  icon={CheckCircle} />
         <StatsCard title="Rejected"        value={rejected} variant="red"    icon={XCircle} />
       </div>
+
+      <SubmissionGraph />
 
       {/* Filter tabs */}
       <div className="flex flex-wrap gap-2 mb-6">

@@ -5,7 +5,8 @@ const {
   createAssignment,
   getAssignments,
   getAssignmentById,
-  updateAssignmentStatus
+  updateAssignmentStatus,
+  getAssignmentStats
 } = require("../controllers/assignmentController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -17,6 +18,9 @@ router.post("/", protect, validate(createAssignmentSchema), createAssignment);
 
 // Get all assignments (logged-in users)
 router.get("/", protect, getAssignments);
+
+// Get assignment stats
+router.get("/stats/all", protect, getAssignmentStats);
 
 // Get single assignment by ID
 router.get("/:id", protect, getAssignmentById);

@@ -3,6 +3,7 @@ import axios from "axios";
 import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
 import StatsCard from "../components/StatsCard";
+import SubmissionGraph from "../components/SubmissionGraph";
 import {
   FileText,
   Clock,
@@ -61,6 +62,8 @@ function StudentDashboard() {
         <StatsCard title="Approved" value={approved} variant="green" icon={CheckCircle} />
         <StatsCard title="Rejected" value={rejected} variant="orange" icon={XCircle} />
       </div>
+
+      <SubmissionGraph />
 
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-theme tracking-tight">Active Assignments</h2>
