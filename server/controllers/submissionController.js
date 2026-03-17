@@ -1,5 +1,6 @@
 const Submission = require("../models/Submission");
 const Assignment = require("../models/Assignment");
+const Notification = require("../models/Notification");
 
 // @desc Student submit assignment
 // @route POST /api/submissions/:assignmentId
@@ -89,6 +90,14 @@ exports.reviewSubmission = async (req, res) => {
     submission.remarks = remarks || "";
 
     await submission.save();
+
+    // Notify the student about the status update
+    await Notification.create({
+      recipient: submission.student,
+      message: `Your submission for an assignment was marked as ${status}.`,
+      type: "GRADING",
+      link: `/submission/${submission._id}`
+    });
 
     return res.json({
       message: "Submission updated",

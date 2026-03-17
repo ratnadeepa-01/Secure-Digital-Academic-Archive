@@ -1,6 +1,7 @@
 const Assignment = require("../models/Assignment");
 const User = require("../models/User");
 const Submission = require("../models/Submission");
+const Notification = require("../models/Notification");
 
 
 // @desc    Create new assignment
@@ -22,6 +23,16 @@ exports.createAssignment = async (req, res) => {
       dueDate,
       createdBy: req.user._id
     });
+
+    // Notify all students
+    const students = await User.find({ role: "student" });
+    const notifications = students.map(student => ({
+      recipient: student._id,
+      message: `A new assignment "${title}" has been posted.`,
+      type: "NEW_ASSIGNMENT",
+      link: `/assignment/${assignment._id}`
+    }));
+    await Notification.insertMany(notifications);
 
     res.status(201).json({
       message: "Assignment created successfully",

@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const assignmentRoutes = require("./routes/assignmentRoutes");
 const submissionRoutes = require("./routes/submissionRoutes");
 const personalDocRoutes = require("./routes/personalDocRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const helmet = require("helmet");
 dotenv.config();
 connectDB();
@@ -20,6 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/personal-docs", personalDocRoutes);
+app.use("/api/notifications", notificationRoutes);
 //to serve the user static image when they give url in browser http.. followed by image url
 const folderLocation = path.join(__dirname, "uploads");
 app.use("/uploads", express.static(folderLocation));

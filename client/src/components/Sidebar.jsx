@@ -72,12 +72,9 @@ function Sidebar({ role }) {
           <p className="px-4 text-[10px] font-bold text-theme-3 uppercase tracking-widest mb-3">
             System
           </p>
-          <button className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-theme-2 hover:bg-theme-border-soft hover:text-theme transition-all">
+          <Link to="/settings" className={navLinkClass("/settings")}>
             <Settings size={17} /> Settings
-          </button>
-          <button className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-theme-2 hover:bg-theme-border-soft hover:text-theme transition-all">
-            <Bell size={17} /> Notifications
-          </button>
+          </Link>
         </div>
       </nav>
 

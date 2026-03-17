@@ -10,6 +10,7 @@ import MySubmissions from "./pages/MySubmissions";
 import CreateAssignment from "./pages/CreateAssignment";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Settings from "./pages/Settings";
 
 const ProtectedRoute = ({ children, allowedRole }) => {
   const token = localStorage.getItem("token");
@@ -99,6 +100,14 @@ function App() {
             path="/review/:id"
             element={
               <ReviewPage />
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
             }
           />
         </Routes>
